@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coopdistill"
+version = "0.1.0"
+description = "Reference-guided residual MARL for cooperative driving"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Anonymous Authors"}]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "torch>=2.2",
+  "matplotlib>=3.7",
+  "pillow>=10.0",
+]
+
+[tool.setuptools]
+packages = ["coopdistill"]
