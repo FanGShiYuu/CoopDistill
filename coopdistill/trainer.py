@@ -26,7 +26,7 @@ from .environment import Config, IntersectionEnv
 from .scenarios import Case, MAX_VEHICLES, make_case, suite
 
 VARIANTS = ('full', 'no_lateral', 'no_curriculum', 'no_fallback',
-            'no_warmstart', 'no_residual', 'direct_mappo')
+            'no_warmstart', 'no_residual')
 STOP = False
 
 
@@ -56,13 +56,13 @@ def dimensions(variant):
     active = np.ones(3, dtype=np.float32)
     if variant == 'no_lateral':
         active[2] = 0.
-    if variant in ('direct_mappo', 'no_residual'):
+    if variant == 'no_residual':
         active[1] = 0.  # Direct acceleration has no PG timing correction.
     return active
 
 
 def mode(variant):
-    return {'no_fallback': 'no_fallback', 'direct_mappo': 'direct', 'no_residual': 'absolute'}.get(variant, 'full')
+    return {'no_fallback': 'no_fallback', 'no_residual': 'absolute'}.get(variant, 'full')
 
 
 def initialize_worker():
@@ -83,7 +83,7 @@ def rollout(task):
     start = time.monotonic()
     with torch.no_grad():
         while not env.done:
-            obs = env.observe(include_pg=variant != 'direct_mappo')
+            obs = env.observe(include_pg=True)
             mask = env.mask()
             if variant == 'pg':
                 action = np.zeros((8, 3), dtype=np.float32)
@@ -340,7 +340,7 @@ def main():
         if pool_path.exists():
             pool_rows = json.loads(pool_path.read_text())
         else:
-            print(f'CURRICULUM baseline scan cases={args.pool}', flush=True)
+            print(f'CURRICULUM reference scan cases={args.pool}', flush=True)
             pool_cases = [make_case(train_base+i) for i in range(args.pool)]
             pool_rows = map_tasks(executor, pg_scan, [(c, cfg) for c in pool_cases])
             atomic_json(pool_path, pool_rows)
@@ -348,7 +348,7 @@ def main():
         hard_seeds = [r['seed'] for r in ranked[:args.hard_count]]
         warm_seeds = [train_base+50_000+i for i in range(args.warm_cases)]
         anchor = None
-        if args.variant not in ('no_warmstart', 'direct_mappo'):
+        if args.variant != 'no_warmstart':
             data_path = out/'warmstart.npz'
             if data_path.exists():
                 with np.load(data_path) as data:
@@ -403,7 +403,7 @@ def main():
             cases = []
             for k in range(args.episodes):
                 s = train_base+1000+update_idx*args.episodes+k
-                if args.variant not in ('no_curriculum', 'direct_mappo') and rng.random() < fraction:
+                if args.variant != 'no_curriculum' and rng.random() < fraction:
                     s = int(rng.choice(hard_seeds))
                 cases.append(make_case(s))
             weights = weights_cpu(actor)

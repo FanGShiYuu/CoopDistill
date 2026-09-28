@@ -72,7 +72,7 @@ def prepare(main_root, root, per_family):
         rejection_counts=rejected, tasks=tasks, training_enabled=False,
         inference_device='cpu; identical rollout implementation to the original evaluation',
         runtime_sha256={p.name: sha(p) for p in Path(__file__).parent.glob('*.py')},
-        interpretation='Fixed default intersection benchmark for reproducible comparison.',
+        interpretation='Fixed default intersection benchmark for reproducible evaluation.',
         selection='PG only: target 20% failures, otherwise highest PG delay; family-balanced; never inspect policy outcomes.',
         safety='Original collision, boundary, dynamics, horizon and fallback checks unchanged.'))
     print(f'PREPARED candidates={len(candidates)} frozen_models={len(tasks)} output={root}', flush=True)

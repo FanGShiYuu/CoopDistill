@@ -4,7 +4,6 @@ __pycache__/
 .venv/
 runs/
 results/*.json
-!results/expected_main_table.json
 *.out
 *.err
 .idea/

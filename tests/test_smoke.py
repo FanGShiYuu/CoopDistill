@@ -3,7 +3,7 @@ import unittest
 
 import torch
 
-from coopdistill.comparison import load_hard_protocol
+from coopdistill.benchmark import load_default_benchmark
 from coopdistill.environment import Config
 from coopdistill.scenarios import make_case
 from coopdistill.trainer import Actor, rollout
@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class PublicReleaseSmokeTest(unittest.TestCase):
     def test_default_benchmark_integrity(self):
-        _, manifest, cases = load_hard_protocol(ROOT / "benchmarks/default")
+        _, manifest, cases = load_default_benchmark(ROOT / "benchmarks/default")
         self.assertEqual(len(cases), 120)
         self.assertEqual(manifest["selected_count"], 120)
         self.assertTrue(all(6 <= len(case.vehicles) <= 8 for case in cases))

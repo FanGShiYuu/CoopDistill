@@ -3,7 +3,6 @@ set -euo pipefail
 
 python -m unittest discover -s tests -v
 python -m coopdistill.evaluate \
-  --methods pg,coopdistill \
   --limit "${LIMIT:-2}" \
   --workers "${WORKERS:-0}" \
   --output results/quickstart.json
