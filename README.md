@@ -1,5 +1,7 @@
 # CoopDistill
 
+[Project Page](https://fangshiyuu.github.io/CoopDistill/) | [Video Demonstrations](https://fangshiyuu.github.io/CoopDistill/#demonstrations)
+
 Official review release for **CoopDistill: Reference-Guided Multi-Agent Policy
 Distillation for Cooperative Driving**.
 

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CoopDistill combines potential-game coordination, residual multi-agent reinforcement learning, hard-case curriculum training, and comparative rollout selection for cooperative driving.">
+  <meta name="theme-color" content="#ffffff">
+  <title>CoopDistill | Cooperative Driving</title>
+  <link rel="canonical" href="https://fangshiyuu.github.io/CoopDistill/">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#abstract">Skip to content</a>
+  <nav class="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="wordmark" href="#top">CoopDistill</a>
+      <div class="nav-links"><a href="#abstract">Abstract</a><a href="#framework">Framework</a><a href="#demonstrations">Demonstrations</a></div>
+    </div>
+  </nav>
+  <main id="top">
+    <header class="paper-header content">
+      <h1>CoopDistill</h1>
+      <p class="paper-title">Equilibrium-Guided Multi-Agent Policy Distillation<br class="desktop-break"> for Cooperative Driving</p>
+      <p class="authors"><span>Shiyu Fang<sup>1</sup></span><span>Sheng Zhao<sup>2</sup></span><span>Jiarui Zhang<sup>1</sup></span><span>Chengkai Xu<sup>1</sup></span><span>Xiaocong Zhao<sup>1</sup></span><span>Peng Hang<sup>1</sup></span><span>Jian Sun<sup>1</sup></span></p>
+      <p class="affiliations"><span><sup>1</sup> Tongji University</span><span><sup>2</sup> Shanghai Jiao Tong University</span></p>
+      <div class="paper-links">
+        <a class="resource-link primary" href="assets/CoopDistill.pdf" target="_blank" rel="noopener"><img src="assets/icons/file-text.svg" alt="" width="18" height="18"> Paper</a>
+        <a class="resource-link" href="https://github.com/FanGShiYuu/CoopDistill" target="_blank" rel="noopener"><img src="assets/icons/github.svg" alt="" width="18" height="18"> Code</a>
+        <a class="resource-link" href="#demonstrations"><img src="assets/icons/play.svg" alt="" width="18" height="18"> Demonstrations</a>
+      </div>
+    </header>
+
+    <section class="content section abstract-section" id="abstract" aria-labelledby="abstract-heading">
+      <h2 id="abstract-heading">Abstract</h2>
+      <p class="abstract-text">Cooperative driving extends autonomous driving from individual vehicle decisions to joint maneuvers that improve traffic safety and efficiency. Optimization-based methods impose safety constraints but often fix paths to simplify multi-vehicle planning, limiting spatial flexibility. Multi-agent reinforcement learning (MARL) explores alternatives through interaction, but coordinated learning and safe execution remain challenging. Their integration nevertheless faces challenges in exploration efficiency, experience allocation, and execution reliability. To address these challenges, this paper proposes CoopDistill, an equilibrium-guided multi-agent policy distillation framework. A potential-game (PG) formulation provides a fixed-path longitudinal reference, around which a residual MARL policy learns longitudinal acceleration, conflict-approach timing, and lateral path corrections. A hard-case curriculum concentrates experience on interactions that PG leaves unresolved or substantially delayed. A comparative rollout selector evaluates the joint consequences of learned corrections against PG before choosing the executed action. Experiments in merging, roundabout, and intersection scenarios compare CoopDistill with six baselines at four connected automated vehicle penetration levels. Relative to PG, success improves by 2.1-27.1 percentage points and delay decreases by 7.3-27.3%, with no observed collisions.</p>
+    </section>
+
+    <section class="section band" id="framework" aria-labelledby="framework-heading">
+      <div class="content">
+        <h2 id="framework-heading">Framework</h2>
+        <p class="section-intro">A potential-game reference structures cooperation. Residual learning expands the available maneuvers, a hard-case curriculum directs training experience, and comparative rollouts determine which joint decision is executed.</p>
+        <figure class="framework-figure">
+          <button class="framework-zoom" type="button" aria-label="Enlarge the CoopDistill framework" title="Enlarge framework">
+            <img class="framework-image" src="assets/framework.png" alt="CoopDistill framework: a potential-game reference conditions residual MARL, hard-case scenes guide training, and comparative rollouts select learned maneuvers or the PG reference." width="2197" height="1134">
+            <span class="zoom-indicator"><img src="assets/icons/zoom-in.svg" width="20" height="20" alt=""></span>
+          </button>
+          <figcaption>PG reference, residual MARL policy learning, hard-case curriculum training, and comparative rollout selection.</figcaption>
+        </figure>
+        <div class="method-points">
+          <article><h3>Residual policy learning</h3><p>A shared MAPPO actor learns longitudinal acceleration, conflict-approach timing, and lateral path corrections around the PG reference.</p></article>
+          <article><h3>Hard-case curriculum</h3><p>PG-only episode outcomes identify unresolved or delayed interactions, which are mixed with fresh scenes during training.</p></article>
+          <article><h3>Comparative rollout selection</h3><p>Candidate and reference are evaluated from the same traffic state. PG is retained when a proposal fails the feasibility or utility conditions.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content section" id="demonstrations" aria-labelledby="demonstrations-heading">
+      <h2 id="demonstrations-heading">Cooperative driving in motion</h2>
+      <p class="section-intro">Paired visualizations show how motion and local path adjustments change vehicle interactions in intersections, roundabouts, and merging areas.</p>
+      <div class="case-jumps" aria-label="Scenario links"><a href="#intersection">Intersection</a><a href="#roundabout">Roundabout</a><a href="#merging">Merging area</a></div>
+
+      <article class="case" id="intersection">
+        <div class="case-heading"><div><p class="case-number">01 / Intersection</p><h3>Releasing mutual obstruction</h3></div><a class="original-link" href="assets/intersection.gif" target="_blank" rel="noopener">Open GIF <img src="assets/icons/external-link.svg" width="16" height="16" alt=""></a></div>
+        <p>Seven vehicles approach a shared intersection. PG retains fixed paths and becomes blocked by mutual waiting; CoopDistill coordinates local path and motion adjustments to create room for passage.</p>
+        <figure class="animation" data-animation="intersection"><img class="demo-image" src="assets/intersection-poster.png" width="1200" height="600" data-gif="assets/intersection.gif" data-poster="assets/intersection-poster.png" alt="Animated comparison of PG and CoopDistill in a seven-vehicle intersection: fixed-path mutual waiting versus coordinated bypass and passage." loading="lazy"><div class="animation-footer"><figcaption>Potential Game / CoopDistill</figcaption><button class="animation-toggle" type="button" aria-pressed="false"><img src="assets/icons/play.svg" alt="" width="16" height="16"><span>Play GIF</span></button></div></figure>
+      </article>
+
+      <article class="case" id="roundabout">
+        <div class="case-heading"><div><p class="case-number">02 / Roundabout</p><h3>Coordinating converging paths</h3></div><a class="original-link" href="assets/roundabout.gif" target="_blank" rel="noopener">Open GIF <img src="assets/icons/external-link.svg" width="16" height="16" alt=""></a></div>
+        <p>Vehicles interact as their routes converge on the circulating roadway. In this case, MADQN's forward progression leads to a collision, while CoopDistill coordinates movement through the interaction.</p>
+        <figure class="animation" data-animation="roundabout"><img class="demo-image" src="assets/roundabout-poster.png" width="1281" height="672" data-gif="assets/roundabout.gif" data-poster="assets/roundabout-poster.png" alt="Animated comparison of MADQN and CoopDistill in a roundabout, showing a collision in the MADQN run and separated vehicle motion with CoopDistill." loading="lazy"><div class="animation-footer"><figcaption>Discrete MADQN / CoopDistill</figcaption><button class="animation-toggle" type="button" aria-pressed="false"><img src="assets/icons/play.svg" alt="" width="16" height="16"><span>Play GIF</span></button></div></figure>
+      </article>
+
+      <article class="case" id="merging">
+        <div class="case-heading"><div><p class="case-number">03 / Merging area</p><h3>Making space for merging traffic</h3></div><a class="original-link" href="assets/merging.gif" target="_blank" rel="noopener">Open GIF <img src="assets/icons/external-link.svg" width="16" height="16" alt=""></a></div>
+        <p>Under FCFS, vehicles on the ramp wait while the mainline stream advances. CoopDistill adjusts local paths and progress to release space for the merging vehicles and clear the interaction sooner.</p>
+        <figure class="animation" data-animation="merging"><img class="demo-image" src="assets/merging-poster.png" width="1281" height="903" data-gif="assets/merging.gif" data-poster="assets/merging-poster.png" alt="Animated comparison of FCFS and CoopDistill at a merging area, showing mainline vehicles creating room and merging vehicles progressing sooner with CoopDistill." loading="lazy"><div class="animation-footer"><figcaption>FCFS / CoopDistill</figcaption><button class="animation-toggle" type="button" aria-pressed="false"><img src="assets/icons/play.svg" alt="" width="16" height="16"><span>Play GIF</span></button></div></figure>
+      </article>
+    </section>
+
+    <section class="section band citation-section" aria-labelledby="citation-heading">
+      <div class="content"><div class="citation-heading"><h2 id="citation-heading">Citation</h2><button class="copy-button" id="copy-citation" type="button" title="Copy BibTeX citation"><img src="assets/icons/copy.svg" width="17" height="17" alt=""><span>Copy BibTeX</span></button></div><pre id="citation"><code>@misc{fang_coopdistill,
+  title  = {CoopDistill: Equilibrium-Guided Multi-Agent Policy
+            Distillation for Cooperative Driving},
+  author = {Shiyu Fang and Sheng Zhao and Jiarui Zhang and
+            Chengkai Xu and Xiaocong Zhao and Peng Hang and Jian Sun},
+  year   = {2026},
+  url    = {https://github.com/FanGShiYuu/CoopDistill}
+}</code></pre><p class="copy-status" role="status" aria-live="polite"></p></div>
+    </section>
+  </main>
+  <footer class="content page-footer"><a class="wordmark" href="#top">CoopDistill</a><p>Equilibrium-guided cooperation with learned maneuver flexibility.</p><a href="mailto:sunjian@tongji.edu.cn">Contact</a></footer>
+  <dialog class="image-dialog" id="framework-dialog" aria-label="CoopDistill framework enlarged"><button type="button" class="dialog-close" aria-label="Close enlarged framework" title="Close"><img src="assets/icons/x.svg" width="24" height="24" alt=""></button><img src="assets/framework.png" alt="Enlarged CoopDistill framework" width="2197" height="1134"></dialog>
+</body>
+</html>
